@@ -8,6 +8,7 @@ authors = ["someoneinjd <someoneinjd@outlook.com>"]
 
 [dependencies]
 glam = "0.18.0"
+png = {path = "./png"}
 
 [[bin]]
 name = "homework_0"

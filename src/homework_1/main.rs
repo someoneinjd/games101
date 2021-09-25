@@ -1,6 +1,8 @@
 use glam::{IVec3, Mat4, Vec3};
+use std::fs::File;
+use std::io::BufWriter;
+use std::path::Path;
 
-mod png;
 mod rst;
 mod triangle;
 
@@ -38,6 +40,20 @@ fn get_projection_matrix(eye_fov: f32, aspect_radio: f32, z_near: f32, z_far: f3
     ])
 }
 
+fn save_png<P: AsRef<Path>>(path: P, width: u32, height: u32, data: &[u8]) {
+    let file = File::create(path).unwrap();
+    let ref mut w = BufWriter::new(file);
+
+    let mut encoder = png::Encoder::new(w, width, height);
+    encoder.set_color(png::ColorType::Rgb);
+    encoder.set_depth(png::BitDepth::Eight);
+    encoder.set_compression(png::Compression::Fast);
+    encoder.set_filter(png::FilterType::Sub);
+
+    let mut writer = encoder.write_header().unwrap();
+    writer.write_image_data(data).unwrap();
+}
+
 fn main() -> std::io::Result<()> {
     let mut angle = 0.0f32;
     let mut r = rst::Rasterizer::new(700, 700);
@@ -62,7 +78,8 @@ fn main() -> std::io::Result<()> {
 
     r.set_projection(&get_projection_matrix(45.0, 1.0, 0.1, 50.0));
     r.draw(pos_id, ind_id, rst::Primitive::Triangle);
-    png::svpng("output.png", 700, 700, r.data(), false)?;
+    save_png("output.png", 700, 700, r.data());
+    print!("\x1b[2J");
     std::process::Command::new("kitty")
         .args(["+kitten", "icat", "output.png"])
         .output()
@@ -71,9 +88,7 @@ fn main() -> std::io::Result<()> {
     stdin.read_line(&mut key)?;
 
     while !key.starts_with("e") {
-        std::process::Command::new("clear")
-            .output()
-            .expect("Command clear not found");
+        print!("\x1b[2J");
         angle += if key.starts_with("a") {
             10.0
         } else if key.starts_with("d") {
@@ -87,7 +102,7 @@ fn main() -> std::io::Result<()> {
 
         r.set_projection(&get_projection_matrix(45.0, 1.0, 0.1, 50.0));
         r.draw(pos_id, ind_id, rst::Primitive::Triangle);
-        png::svpng("output.png", 700, 700, r.data(), false)?;
+        save_png("output.png", 700, 700, r.data());
         std::process::Command::new("kitty")
             .args(["+kitten", "icat", "output.png"])
             .output()

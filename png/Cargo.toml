@@ -1,0 +1,19 @@
+[package]
+name = "png"
+version = "0.17.1"
+license = "MIT OR Apache-2.0"
+
+description = "PNG decoding and encoding library in pure Rust"
+categories = ["multimedia::images"]
+authors = ["The image-rs Developers"]
+repository = "https://github.com/image-rs/image-png.git"
+
+edition = "2018"
+
+[dependencies]
+bitflags = "1.0"
+crc32fast = "1.2.0"
+deflate = "0.9"
+[dependencies.miniz_oxide]
+version = "0.4.1"
+features = ["no_extern_crate_alloc"]
