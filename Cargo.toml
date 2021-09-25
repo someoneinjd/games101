@@ -1,0 +1,18 @@
+[package]
+name = "games101"
+version = "0.1.0"
+edition = "2021"
+authors = ["someoneinjd <someoneinjd@outlook.com>"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+glam = "0.18.0"
+
+[[bin]]
+name = "homework_0"
+path = "src/homework_0/main.rs"
+
+[[bin]]
+name = "homework_1"
+path = "src/homework_1/main.rs"
