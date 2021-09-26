@@ -8,7 +8,10 @@ authors = ["someoneinjd <someoneinjd@outlook.com>"]
 
 [dependencies]
 glam = "0.18.0"
-png = {path = "./png"}
+image = {version = "0.23.14", features = ["png"], default-features = false}
+
+[lib]
+path = "src/lib.rs"
 
 [[bin]]
 name = "homework_0"
