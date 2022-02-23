@@ -1,3 +1,4 @@
+use games101::save_image;
 use glam::{IVec3, Mat4, Vec3};
 
 mod rst;
@@ -51,7 +52,7 @@ fn main() -> std::io::Result<()> {
     r.set_projection(&get_projection_matrix(45.0, 1.0, 0.1, 50.0));
     r.draw(pos_id, ind_id, rst::Primitive::Triangle);
     games101::save_image("output.png", r.data(), 700, 700);
-    games101::display_image("output.png");
+    println!("\x1b[32mSave to output.png successfully\x1b[0m");
 
     stdin.read_line(&mut key)?;
 
@@ -66,15 +67,11 @@ fn main() -> std::io::Result<()> {
         };
         r.set_model(&get_model_matrix(angle));
         r.set_view(&get_view_matrix(eye_pos));
-
         r.set_projection(&get_projection_matrix(45.0, 1.0, 0.1, 50.0));
         r.draw(pos_id, ind_id, rst::Primitive::Triangle);
         games101::save_image("output.png", r.data(), 700, 700);
-        games101::display_image("output.png");
-
         key.clear();
         stdin.read_line(&mut key)?;
     }
-
     Ok(())
 }
