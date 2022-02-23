@@ -70,6 +70,7 @@ fn main() -> std::io::Result<()> {
         r.set_projection(&get_projection_matrix(45.0, 1.0, 0.1, 50.0));
         r.draw(pos_id, ind_id, rst::Primitive::Triangle);
         games101::save_image("output.png", r.data(), 700, 700);
+        println!("\x1b[32mSave to output.png successfully\x1b[0m");
         key.clear();
         stdin.read_line(&mut key)?;
     }
