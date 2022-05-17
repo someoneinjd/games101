@@ -4,8 +4,7 @@ extern crate glium;
 use glium::index::PrimitiveType;
 use glium::{glutin, Surface};
 use glutin::event::{ElementState, Event, KeyboardInput, VirtualKeyCode, WindowEvent};
-use glutin::event_loop::ControlFlow;
-use support::save_image;
+use support::{save_image, start_loop, Action};
 
 use glam::{IVec3, Mat4, Vec3};
 
@@ -97,8 +96,7 @@ fn main() {
 
     // building the index buffer
     let index_buffer =
-        glium::IndexBuffer::new(&display, PrimitiveType::TriangleStrip, &[1_u16, 2, 0, 3])
-            .unwrap();
+        glium::IndexBuffer::new(&display, PrimitiveType::TriangleStrip, &[1_u16, 2, 0, 3]).unwrap();
 
     // compiling shaders and linking them together
     let program = program!(&display,
@@ -174,9 +172,8 @@ fn main() {
     )
     .unwrap();
 
-    event_loop.run(move |event, _, control_flow| {
-        *control_flow = ControlFlow::Wait;
-        let image = glium::texture::RawImage2d::from_raw_rgb(r.data().into(), (700, 700));
+    start_loop(event_loop, move |events| {
+        let image = glium::texture::RawImage2d::from_raw_rgb_reversed(r.data(), (700, 700));
         let opengl_texture = glium::texture::CompressedSrgbTexture2d::new(&display, image).unwrap();
         let uniforms = uniform! {
             matrix: [
@@ -199,31 +196,35 @@ fn main() {
             )
             .unwrap();
         target.finish().unwrap();
-        if let Event::WindowEvent { event, .. } = event {
-            match event {
-                WindowEvent::CloseRequested => {
-                    save_image("output.png", r.data(), 700, 700);
-                    *control_flow = ControlFlow::Exit;
-                }
-                WindowEvent::KeyboardInput {
-                    input:
-                        KeyboardInput {
-                            virtual_keycode: Some(virtual_code),
-                            state,
-                            ..
-                        },
-                    ..
-                } => match (virtual_code, state) {
-                    (VirtualKeyCode::Left, ElementState::Pressed) => angle += 10.0,
-                    (VirtualKeyCode::Right, ElementState::Pressed) => angle -= 10.0,
+        let mut action = Action::Continue;
+        for event in events {
+            if let Event::WindowEvent { event, .. } = event {
+                match event {
+                    WindowEvent::CloseRequested => {
+                        save_image("output.png", r.data(), 700, 700);
+                        action = Action::Stop;
+                    }
+                    WindowEvent::KeyboardInput {
+                        input:
+                            KeyboardInput {
+                                virtual_keycode: Some(virtual_code),
+                                state,
+                                ..
+                            },
+                        ..
+                    } => match (virtual_code, state) {
+                        (VirtualKeyCode::Left, ElementState::Pressed) => angle += 10.0,
+                        (VirtualKeyCode::Right, ElementState::Pressed) => angle -= 10.0,
+                        _ => (),
+                    },
                     _ => (),
-                },
-                _ => (),
+                }
             }
         }
         r.set_model(&get_model_matrix(angle));
         r.set_view(&get_view_matrix(eye_pos));
         r.set_projection(&get_projection_matrix(45.0, 1.0, 0.1, 50.0));
         r.draw(pos_id, ind_id, rst::Primitive::Triangle);
+        action
     });
 }
