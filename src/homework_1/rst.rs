@@ -73,7 +73,6 @@ impl Rasterizer {
             || point.y < 0.0
             || point.y >= self.height as f32
         {
-            return;
         } else {
             let ind = (self.height as f32 - 1.0 - point.y) * self.width as f32 + point.x;
             self.frame_buf[ind as usize] = *color;
@@ -123,7 +122,7 @@ impl Rasterizer {
             }
 
             let mut point = Vec3::new(x as f32, y as f32, 1.0);
-            self.set_pixel(&point, &line_color);
+            self.set_pixel(&point, line_color);
 
             while x < xe {
                 x += 1;
@@ -139,7 +138,7 @@ impl Rasterizer {
                     px += 2 * (dy1 - dx1);
                 }
                 point = Vec3::new(x as f32, y as f32, 1.0);
-                self.set_pixel(&point, &line_color);
+                self.set_pixel(&point, line_color);
             }
         } else {
             if dy >= 0 {
@@ -153,7 +152,7 @@ impl Rasterizer {
             }
 
             let mut point = Vec3::new(x as f32, y as f32, 1.0);
-            self.set_pixel(&point, &line_color);
+            self.set_pixel(&point, line_color);
 
             while y < ye {
                 y += 1;
@@ -170,7 +169,7 @@ impl Rasterizer {
                 }
 
                 point = Vec3::new(x as f32, y as f32, 1.0);
-                self.set_pixel(&point, &line_color);
+                self.set_pixel(&point, line_color);
             }
         }
     }
@@ -212,7 +211,7 @@ impl Rasterizer {
                 }
 
                 for (idx, i) in v.iter().enumerate() {
-                    t.set_vertex(idx, (*i).into());
+                    t.set_vertex(idx, Vec3::new(i.x, i.y, i.z));
                 }
 
                 t.set_color(0, 255, 0, 0);

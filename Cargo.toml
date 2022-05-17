@@ -7,11 +7,9 @@ authors = ["someoneinjd <someoneinjd@outlook.com>"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-glam = "0.18.0"
-image = {version = "0.23.14", features = ["png"], default-features = false}
-
-[lib]
-path = "src/lib.rs"
+glam = "0.20.5"
+image = {version = "0.24.2", features = ["png"], default-features = false}
+glium = "0.31.0"
 
 [[bin]]
 name = "homework_0"
@@ -20,3 +18,7 @@ path = "src/homework_0/main.rs"
 [[bin]]
 name = "homework_1"
 path = "src/homework_1/main.rs"
+
+[lib]
+name = "support"
+path = "src/support.rs"
